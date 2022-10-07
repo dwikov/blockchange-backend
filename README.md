@@ -1,6 +1,6 @@
-# Sample Hardhat Project
+# Solidity contract for block-change
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+This contract is responsible for managing a petition system on the blockchain.
 
 Try running some of the following tasks:
 
