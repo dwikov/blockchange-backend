@@ -10,7 +10,8 @@ contract Petitions {
     uint votersCount;
     uint timeCreated;
     string title;
-    string ipfsCID;
+    string contentCID;
+    string imageCID;
   }
 
   event PetitionCreated(Petition _petition);
@@ -23,8 +24,8 @@ contract Petitions {
   Petition[] public petitions;
   uint public petitionsCount;
 
-  function addPetition(string calldata _title, string calldata ipfsCID) external {
-    petitions.push(Petition(petitions.length, 0, block.timestamp, _title, ipfsCID));
+  function addPetition(string calldata _title, string calldata contentCID, string calldata imageCID) external {
+    petitions.push(Petition(petitions.length, 0, block.timestamp, _title, contentCID, imageCID));
     petitionsCount++;
     emit PetitionCreated(petitions[petitions.length - 1]);
   }
