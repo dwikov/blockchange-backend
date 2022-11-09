@@ -13,31 +13,35 @@ describe("Petitions", function () {
     const Petitions = await ethers.getContractFactory("Petitions");
     const petitions = await Petitions.deploy();
 
-    return { petitions, user, anotherUser };
+    const title = "Some title for the petition"
+    const contentCID = "QmeWg7fhRMVNpNZ5KWo9KLmMC3CrXH6QjwQjU7CbSSHNye"
+    const imageCID = "QmeWg7fhRMVNpNZ5KWo9KLmMC3CrXH6QjwQjU7CbSSHNye"
+
+    return { petitions, user, anotherUser, title, contentCID, imageCID };
   }
 
   describe('addPetition', () => { 
     it("adds petition to the array of petitions", async () => {
-      const { petitions } = await loadFixture(deployInitFixture);
+      const { petitions, title, contentCID, imageCID } = await loadFixture(deployInitFixture);
 
-      await petitions.addPetition();
+      await petitions.addPetition(title, contentCID, imageCID);
 
       expect((await petitions.petitions(0))[0]).to.equal(0);
       expect((await petitions.petitions(0))[1]).to.equal(0);
     });
 
     it("emits an event when an petition is added", async () => {
-      const { petitions } = await loadFixture(deployInitFixture);
+      const { petitions, title, contentCID, imageCID } = await loadFixture(deployInitFixture);
 
-      expect(petitions.addPetition()).to.emit(petitions, "PetitionCreated");
+      expect(petitions.addPetition(title, contentCID, imageCID)).to.emit(petitions, "PetitionCreated");
     });
   });
 
   describe('vote', () => { 
     it("votes a petition", async () => {
-      const { petitions, anotherUser } = await loadFixture(deployInitFixture);
+      const { petitions, anotherUser, title, contentCID, imageCID } = await loadFixture(deployInitFixture);
       
-      await petitions.addPetition();
+      await petitions.addPetition(title, contentCID, imageCID);
       await petitions.vote(0);
       await petitions.connect(anotherUser).vote(0);
 
@@ -45,9 +49,9 @@ describe("Petitions", function () {
     });
 
     it("reverts with the right error if the user already voted for the petition", async () => {
-      const { petitions } = await loadFixture(deployInitFixture);
+      const { petitions, title, contentCID, imageCID } = await loadFixture(deployInitFixture);
 
-      await petitions.addPetition();
+      await petitions.addPetition(title, contentCID, imageCID);
       await petitions.vote(0);
 
       expect(petitions.vote(0)).to.be.revertedWith(
@@ -64,9 +68,9 @@ describe("Petitions", function () {
     });
 
     it("emits an event when an petition is voted", async () => {
-      const { petitions } = await loadFixture(deployInitFixture);
+      const { petitions, title, contentCID, imageCID } = await loadFixture(deployInitFixture);
 
-      await petitions.addPetition();
+      await petitions.addPetition(title, contentCID, imageCID);
       expect(petitions.vote(0)).to.emit(petitions, "PetitionVoted");
     });
   });
@@ -81,16 +85,16 @@ describe("Petitions", function () {
     });
 
     it("emits the right event when petition is followed", async () => {
-      const { petitions } = await loadFixture(deployInitFixture);
+      const { petitions, title, contentCID, imageCID } = await loadFixture(deployInitFixture);
 
-      await petitions.addPetition();
+      await petitions.addPetition(title, contentCID, imageCID);
       expect(petitions.flipFollow(0)).to.emit(petitions, "PetitionFollowed");
     });
 
     it("emits the right event when petition is unfollowed", async () => {
-      const { petitions } = await loadFixture(deployInitFixture);
+      const { petitions, title, contentCID, imageCID } = await loadFixture(deployInitFixture);
 
-      await petitions.addPetition();
+      await petitions.addPetition(title, contentCID, imageCID);
       await petitions.flipFollow(0);
       expect(petitions.flipFollow(1)).to.emit(petitions, "PetitionUnfollowed");
     });
